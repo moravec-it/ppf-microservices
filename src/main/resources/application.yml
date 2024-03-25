@@ -1,0 +1,19 @@
+server:
+  port: 8099
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ppf
+    username: hakase
+    password: hakasepasspgsql
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: changelog.xml
+  jackson:
+    default-property-inclusion: NON_NULL
+
