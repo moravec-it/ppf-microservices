@@ -1,8 +1,8 @@
 package org.ppf.api;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.ppf.api.dto.TransactionDto;
+import org.ppf.api.dto.TransactionSaveLogDto;
 import org.ppf.logic.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -25,13 +25,28 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/createTransactions")
-    public void createTransactions(@RequestBody List<TransactionDto> transactionDtoList) {
-        transactionService.saveTransactions(transactionDtoList);
+    public TransactionSaveLogDto createTransactions(@RequestBody List<TransactionDto> transactionDtoList) {
+        return transactionService.saveTransactions(transactionDtoList);
     }
 
     @GetMapping("/accounts/{ownAccountNumber}/transactions")
     public List<TransactionDto> getAccountTransactions(@PathVariable String ownAccountNumber) {
         return transactionService.fetchAccountTransactions(ownAccountNumber);
+    }
+
+    @GetMapping("/trxTypes/{code}/transactions")
+    public List<TransactionDto> getTrxTypeTransactions(@PathVariable Integer code) {
+        return transactionService.fetchTrxTypeTransactions(code);
+    }
+
+    @GetMapping("/statements/{number}/transactions")
+    public List<TransactionDto> getStatementTransactions(@PathVariable String number) {
+        return transactionService.fetchStatementTransactions(number);
+    }
+
+    @GetMapping("/counterPartyAccounts/{number}/transactions")
+    public List<TransactionDto> getCounterPartyAccountTransactions(@PathVariable String number) {
+        return transactionService.fetchCounterPartyAccountTransactions(number);
     }
 
     @ExceptionHandler(DataAccessException.class)

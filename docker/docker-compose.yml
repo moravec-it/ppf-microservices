@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres_db 
+    restart: always
+    environment:
+      - POSTGRES_USER=hakase
+      - POSTGRES_PASSWORD=hakasepasspgsql
+      - POSTGRES_DB=ppf
+    volumes:
+      - /root/db:/var/lib/postgresql/data
+    user: root
+    ports:
+      - 5432:5432    
+    networks:
+      - net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 150M    
+
+  ppf-microservices:
+    image: registry.digitalocean.com/ppf-microservices/ppf-microservices
+    container_name: ppf-microservices
+    depends_on:
+      - postgres_db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/ppf
+      - SPRING_DATASOURCE_USERNAME=hakase
+      - SPRING_DATASOURCE_PASSWORD=hakasepasspgsql
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SERVER_TOMCAT_ACCEPT_COUNT=3
+      - SERVER_TOMCAT_MAX_CONNECTIONS=3
+      - SERVER_TOMCAT_THREADS_MAX=3
+      - SERVER_TOMCAT_THREADS_MIN_SPARE=1
+      - SPRING_MAIN_LAZY_INITIALIZATION=true
+      - JAVA_TOOL_OPTIONS=-XX:+UseSerialGC -Xss512k -XX:MaxRAM=800m
+    user: root
+    ports:
+      - 8099:8099
+    networks:
+      - net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 1600M
+
+networks:
+  net:

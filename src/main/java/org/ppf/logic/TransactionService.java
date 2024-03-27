@@ -1,6 +1,10 @@
 package org.ppf.logic;
 
+import org.ppf.api.dto.AccountDto;
+import org.ppf.api.dto.StatementDto;
 import org.ppf.api.dto.TransactionDto;
+import org.ppf.api.dto.TransactionSaveLogDto;
+import org.ppf.api.dto.TransactionTypeDto;
 import org.ppf.model.dao.AccountDao;
 import org.ppf.model.dao.StatementDao;
 import org.ppf.model.dao.TransactionDao;
@@ -31,86 +35,142 @@ public class TransactionService {
     @Transactional
     public List<TransactionDto> fetchAccountTransactions(String ownAccountNumber) {
         List<Transaction> transactions = transactionDao.findByOwnAccountNumber(ownAccountNumber);
-        return transactions.stream().map(transaction -> {
-
-            TransactionDto transactionDto = new TransactionDto();
-
-            TransactionDto.Amount amount = new TransactionDto.Amount();
-            amount.setValue(transaction.getAmount());
-            amount.setCurrency(transaction.getCurrency());
-
-            transactionDto.setAmount(amount);
-            transactionDto.setBankref(transaction.getBankref());
-            transactionDto.setBookingDate(transaction.getBookingDate());
-            transactionDto.setConstantSymbol(transaction.getConstantSymbol());
-            transactionDto.setVariableSymbol(transaction.getVariableSymbol());
-            transactionDto.setSpecificSymbol(transaction.getSpecificSymbol());
-
-            TransactionDto.CounterPartyAccount account = new TransactionDto.CounterPartyAccount();
-            account.setAccountName(transaction.getCounterPartyAccount().getName());
-            account.setAccountNumber(transaction.getCounterPartyAccount().getNumber());
-            account.setBankCode(transaction.getCounterPartyAccount().getCode());
-
-            transactionDto.setCounterPartyAccount(account);
-            transactionDto.setCreditDebitIndicator(transaction.getCreditDebitIndicator());
-            transactionDto.setId(transaction.getId());
-            transactionDto.setOwnAccountNumber(transaction.getOwnAccountNumber());
-            transactionDto.setProductBankRef(transaction.getProductBankRef());
-            transactionDto.setPostingDate(transaction.getPostingDate());
-
-            TransactionDto.Details details = new TransactionDto.Details();
-            details.setDetail1(transaction.getDetail1());
-            details.setDetail2(transaction.getDetail2());
-            details.setDetail3(transaction.getDetail3());
-            details.setDetail4(transaction.getDetail4());
-
-            transactionDto.setDetails(details);
-            transactionDto.setStatementDescription(transaction.getStatement().getDescription());
-            transactionDto.setStatementNumber(transaction.getStatement().getNumber());
-            transactionDto.setStatementPeriod(transaction.getStatement().getPeriod());
-            transactionDto.setTransactionId(transaction.getTransactionId());
-            transactionDto.setTransactionType(transaction.getTransactionType().getType());
-            transactionDto.setTransactionTypeCode(transaction.getTransactionType().getCode());
-
-            return transactionDto;
-
-        }).collect(Collectors.toList());
+        return transactions.stream().map(transaction -> mapTransactionToDto(transaction)).collect(Collectors.toList());
     }
 
     @Transactional
-    public void saveTransactions(List<TransactionDto> transactionDtoList) {
+    public List<TransactionDto> fetchTrxTypeTransactions(Integer code) {
+        List<Transaction> transactions = transactionDao.findByTransactionTypeCode(code);
+        return transactions.stream().map(transaction -> mapTransactionToDto(transaction)).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<TransactionDto> fetchStatementTransactions(String number) {
+        List<Transaction> transactions = transactionDao.findByStatementNumber(number);
+        return transactions.stream().map(transaction -> mapTransactionToDto(transaction)).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<TransactionDto> fetchCounterPartyAccountTransactions(String number) {
+        List<Transaction> transactions = transactionDao.findByCounterPartyAccountNumber(number);
+        return transactions.stream().map(transaction -> mapTransactionToDto(transaction)).collect(Collectors.toList());
+    }
+
+    protected TransactionDto mapTransactionToDto(Transaction transaction) {
+        TransactionDto transactionDto = new TransactionDto();
+
+        TransactionDto.Amount amount = new TransactionDto.Amount();
+        amount.setValue(transaction.getAmount());
+        amount.setCurrency(transaction.getCurrency());
+
+        transactionDto.setAmount(amount);
+        transactionDto.setBankref(transaction.getBankref());
+        transactionDto.setBookingDate(transaction.getBookingDate());
+        transactionDto.setConstantSymbol(transaction.getConstantSymbol());
+        transactionDto.setVariableSymbol(transaction.getVariableSymbol());
+        transactionDto.setSpecificSymbol(transaction.getSpecificSymbol());
+
+        TransactionDto.CounterPartyAccount account = new TransactionDto.CounterPartyAccount();
+        account.setAccountName(transaction.getCounterPartyAccount().getName());
+        account.setAccountNumber(transaction.getCounterPartyAccount().getNumber());
+        account.setBankCode(transaction.getCounterPartyAccount().getCode());
+
+        transactionDto.setCounterPartyAccount(account);
+        transactionDto.setCreditDebitIndicator(transaction.getCreditDebitIndicator());
+        transactionDto.setId(transaction.getId());
+        transactionDto.setOwnAccountNumber(transaction.getOwnAccountNumber());
+        transactionDto.setProductBankRef(transaction.getProductBankRef());
+        transactionDto.setPostingDate(transaction.getPostingDate());
+
+        TransactionDto.Details details = new TransactionDto.Details();
+        details.setDetail1(transaction.getDetail1());
+        details.setDetail2(transaction.getDetail2());
+        details.setDetail3(transaction.getDetail3());
+        details.setDetail4(transaction.getDetail4());
+
+        transactionDto.setDetails(details);
+        transactionDto.setStatementDescription(transaction.getStatement().getDescription());
+        transactionDto.setStatementNumber(transaction.getStatement().getNumber());
+        transactionDto.setStatementPeriod(transaction.getStatement().getPeriod());
+        transactionDto.setTransactionId(transaction.getTransactionId());
+        transactionDto.setTransactionType(transaction.getTransactionType().getType());
+        transactionDto.setTransactionTypeCode(transaction.getTransactionType().getCode());
+        return transactionDto;
+    }
+
+    @Transactional
+    public TransactionSaveLogDto saveTransactions(List<TransactionDto> transactionDtoList) {
+        TransactionSaveLogDto transactionSaveLogDto = new TransactionSaveLogDto();
         for (TransactionDto transactionDto: transactionDtoList) {
-            saveTransaction(transactionDto);
+            saveTransaction(transactionDto, transactionSaveLogDto);
         }
+        return transactionSaveLogDto;
     }
 
     @Transactional
-    public void saveTransaction(TransactionDto transactionDto) {
+    public void saveTransaction(TransactionDto transactionDto, TransactionSaveLogDto transactionSaveLogDto) {
         // Not the best solution, but fast enough to develop.
         Account account = accountDao.findByNumber(transactionDto.getCounterPartyAccount().getAccountNumber());
         Statement statement = statementDao.findByNumber(transactionDto.getStatementNumber());
         TransactionType transactionType = transactionTypeDao.findByCode(transactionDto.getTransactionTypeCode());
 
+        AccountDto accountDto = new AccountDto();
+        accountDto.setNumber(transactionDto.getCounterPartyAccount().getAccountNumber());
+
         if (account == null) {
+
             account = new Account();
             account.setCode(transactionDto.getCounterPartyAccount().getBankCode());
             account.setNumber(transactionDto.getCounterPartyAccount().getAccountNumber());
             account.setName(transactionDto.getCounterPartyAccount().getAccountName());
+
             accountDao.save(account);
+
+            accountDto.setCode(transactionDto.getCounterPartyAccount().getBankCode());
+            accountDto.setName(transactionDto.getCounterPartyAccount().getAccountName());
+            transactionSaveLogDto.getCreatedAccounts().add(accountDto);
+
+        } else {
+            transactionSaveLogDto.getReferencedAccountsWithIgnoredContent().add(accountDto);
         }
+
+        StatementDto statementDto = new StatementDto();
+        statementDto.setNumber(transactionDto.getStatementNumber());
+
         if (statement == null) {
+
             statement = new Statement();
             statement.setNumber(transactionDto.getStatementNumber());
             statement.setPeriod(transactionDto.getStatementPeriod());
             statement.setDescription(transactionDto.getStatementDescription());
+
             statementDao.save(statement);
+
+            statementDto.setPeriod(transactionDto.getStatementPeriod());
+            statementDto.setDescription(transactionDto.getStatementDescription());
+            transactionSaveLogDto.getCreatedStatements().add(statementDto);
+
+        } else {
+            transactionSaveLogDto.getReferencedStatementsWithIgnoredContent().add(statementDto);
         }
+
+        TransactionTypeDto transactionTypeDto = new TransactionTypeDto();
+        transactionTypeDto.setCode(transactionDto.getTransactionTypeCode());
+
         if (transactionType == null) {
             transactionType = new TransactionType();
             transactionType.setType(transactionDto.getTransactionType());
             transactionType.setCode(transactionDto.getTransactionTypeCode());
+
             transactionTypeDao.save(transactionType);
+
+            transactionTypeDto.setType(transactionDto.getTransactionType());
+            transactionSaveLogDto.getCreatedTransactionTypes().add(transactionTypeDto);
+        } else {
+            transactionSaveLogDto.getReferencedTransactionTypesWithIgnoredContent().add(transactionTypeDto);
         }
+
+
         Transaction transaction = new Transaction();
 
         transaction.setCounterPartyAccount(account);
@@ -137,6 +197,7 @@ public class TransactionService {
         transaction.setVariableSymbol(transactionDto.getVariableSymbol());
         transaction.setSpecificSymbol(transactionDto.getSpecificSymbol());
         transaction.setTransactionId(transactionDto.getTransactionId());
+
         transactionDao.save(transaction);
     }
 }
