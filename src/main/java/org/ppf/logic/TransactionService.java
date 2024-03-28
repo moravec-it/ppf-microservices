@@ -12,6 +12,7 @@ import org.ppf.model.dao.TransactionTypeDao;
 import org.ppf.model.entity.Account;
 import org.ppf.model.entity.Statement;
 import org.ppf.model.entity.Transaction;
+import org.ppf.model.entity.TransactionAmount;
 import org.ppf.model.entity.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,17 @@ public class TransactionService {
     public List<TransactionDto> fetchCounterPartyAccountTransactions(String number) {
         List<Transaction> transactions = transactionDao.findByCounterPartyAccountNumber(number);
         return transactions.stream().map(transaction -> mapTransactionToDto(transaction)).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<TransactionDto.Amount> fetchAccountTransactionsSum(String ownAccountNumber) {
+        List<TransactionAmount> amounts = transactionDao.sumAccountTransactions(ownAccountNumber);
+        return amounts.stream().map(amount -> {
+            TransactionDto.Amount amountDto = new TransactionDto.Amount();
+            amountDto.setCurrency(amount.getCurrency());
+            amountDto.setValue(amount.getAmount());
+            return amountDto;
+        }).collect(Collectors.toList());
     }
 
     protected TransactionDto mapTransactionToDto(Transaction transaction) {

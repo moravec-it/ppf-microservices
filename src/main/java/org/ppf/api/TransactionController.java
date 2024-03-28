@@ -49,6 +49,11 @@ public class TransactionController {
         return transactionService.fetchCounterPartyAccountTransactions(number);
     }
 
+    @GetMapping("/accounts/{ownAccountNumber}/sum")
+    public List<TransactionDto.Amount> getAccountTransactionsSum(@PathVariable String ownAccountNumber) {
+        return transactionService.fetchAccountTransactionsSum(ownAccountNumber);
+    }
+
     @ExceptionHandler(DataAccessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleDataAccessException(
