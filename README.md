@@ -1,9 +1,10 @@
-# ppf-microservices
+# ppf-microservices  
 
-Write data Služba: POST 134.209.236.1:8099/createTransactions
-Ukázkový request:
+**Write data služba:**  
+POST 134.209.236.1:8099/createTransactions  
+Ukázkový request:  
 
-curl --location --request POST '134.209.236.1:8099/createTransactions' \
+_curl --location --request POST '134.209.236.1:8099/createTransactions' \
 --header 'Content-Type: application/json;charset=UTF-8' \
 --data-raw '[ 
 {
@@ -146,25 +147,30 @@ curl --location --request POST '134.209.236.1:8099/createTransactions' \
     "transactionTypeCode": 0,
     "variableSymbol": "12"
 }
-]'
+]'_
 
-Poznámky: 
-Entity counterPartyAccount, statement a transactionType
-se vytvoří v případě, že neexistují. 
-V opačném případě se pouze referencují na transaction pomocí business klíčů
+**Poznámky:**   
 
-counterPartyAccount: number
-statement: number
-transactionType: code 
+Entity counterPartyAccount, statement a transactionType  
+se vytvoří v případě, že neexistují.   
+V opačném případě se pouze referencují na transaction pomocí business klíčů:  
 
-Další read data služby (vracejí seznam transakcí odpovídající danným relacím):
-GET 134.209.236.1:8099/accounts/2002222222/transactions
+counterPartyAccount: number  
+statement: number  
+transactionType: code  
+
+**Read data služby (vracejí seznam transakcí odpovídající danným relacím):**  
+
+GET 134.209.236.1:8099/accounts/2002222222/transactions  
 business klíč: ownAccountNumber
-GET 134.209.236.1:8099/counterPartyAccounts/0000009505020008/transactions
-business klíč: number
-GET 134.209.236.1:8099/statements/195/transactions
-business klíč: number
-GET 134.209.236.1:8099/trxTypes/0/transactions
-business klíč: code
+
+GET 134.209.236.1:8099/counterPartyAccounts/0000009505020008/transactions  
+business klíč: number  
+
+GET 134.209.236.1:8099/statements/195/transactions  
+business klíč: number  
+
+GET 134.209.236.1:8099/trxTypes/0/transactions  
+business klíč: code  
 
 
