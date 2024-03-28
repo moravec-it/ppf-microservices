@@ -1,6 +1,7 @@
 # ppf-microservices
 
-Write data Služba: POST 134.209.236.1:8099/createTransactions
+**Write data služba: **
+POST 134.209.236.1:8099/createTransactions
 Ukázkový request:
 
 curl --location --request POST '134.209.236.1:8099/createTransactions' \
@@ -148,16 +149,19 @@ curl --location --request POST '134.209.236.1:8099/createTransactions' \
 }
 ]'
 
-Poznámky: 
+**Poznámky:** 
+
 Entity counterPartyAccount, statement a transactionType
 se vytvoří v případě, že neexistují. 
 V opačném případě se pouze referencují na transaction pomocí business klíčů
+
 
 counterPartyAccount: number
 statement: number
 transactionType: code 
 
-Další read data služby (vracejí seznam transakcí odpovídající danným relacím):
+
+**Read data služby (vracejí seznam transakcí odpovídající danným relacím):**
 
 GET 134.209.236.1:8099/accounts/2002222222/transactions
 business klíč: ownAccountNumber
