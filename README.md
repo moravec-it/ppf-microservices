@@ -1,10 +1,10 @@
 # ppf-microservices
 
-**Write data služba: **
+**Write data služba:**
 POST 134.209.236.1:8099/createTransactions
 Ukázkový request:
 
-curl --location --request POST '134.209.236.1:8099/createTransactions' \
+_curl --location --request POST '134.209.236.1:8099/createTransactions' \
 --header 'Content-Type: application/json;charset=UTF-8' \
 --data-raw '[ 
 {
@@ -147,19 +147,17 @@ curl --location --request POST '134.209.236.1:8099/createTransactions' \
     "transactionTypeCode": 0,
     "variableSymbol": "12"
 }
-]'
+]'_
 
 **Poznámky:** 
 
 Entity counterPartyAccount, statement a transactionType
 se vytvoří v případě, že neexistují. 
-V opačném případě se pouze referencují na transaction pomocí business klíčů
-
+V opačném případě se pouze referencují na transaction pomocí business klíčů:
 
 counterPartyAccount: number
 statement: number
-transactionType: code 
-
+transactionType: code
 
 **Read data služby (vracejí seznam transakcí odpovídající danným relacím):**
 
