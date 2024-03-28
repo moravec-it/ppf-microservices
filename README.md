@@ -149,28 +149,28 @@ _curl --location --request POST '134.209.236.1:8099/createTransactions' \
 }
 ]'_
 
-**Poznámky:** 
+**Poznámky:**   
 
-Entity counterPartyAccount, statement a transactionType
-se vytvoří v případě, že neexistují. 
-V opačném případě se pouze referencují na transaction pomocí business klíčů:
+Entity counterPartyAccount, statement a transactionType  
+se vytvoří v případě, že neexistují.   
+V opačném případě se pouze referencují na transaction pomocí business klíčů:  
 
-counterPartyAccount: number
-statement: number
-transactionType: code
+counterPartyAccount: number  
+statement: number  
+transactionType: code  
 
-**Read data služby (vracejí seznam transakcí odpovídající danným relacím):**
+**Read data služby (vracejí seznam transakcí odpovídající danným relacím):**  
 
 GET 134.209.236.1:8099/accounts/2002222222/transactions  
 business klíč: ownAccountNumber
 
-GET 134.209.236.1:8099/counterPartyAccounts/0000009505020008/transactions
-business klíč: number
+GET 134.209.236.1:8099/counterPartyAccounts/0000009505020008/transactions  
+business klíč: number  
 
-GET 134.209.236.1:8099/statements/195/transactions
-business klíč: number
+GET 134.209.236.1:8099/statements/195/transactions  
+business klíč: number  
 
-GET 134.209.236.1:8099/trxTypes/0/transactions
-business klíč: code
+GET 134.209.236.1:8099/trxTypes/0/transactions  
+business klíč: code  
 
 
