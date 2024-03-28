@@ -173,4 +173,9 @@ business klíč: number
 GET 134.209.236.1:8099/trxTypes/0/transactions  
 business klíč: code  
 
+**Agregační služby:**  
+GET 134.209.236.1:8099/accounts/2002222222/sum  
+business klíč: ownAccountNumber  
+
+
 
