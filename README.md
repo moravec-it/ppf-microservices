@@ -1,8 +1,8 @@
-# ppf-microservices
+# ppf-microservices  
 
 **Write data služba:**
-POST 134.209.236.1:8099/createTransactions
-Ukázkový request:
+POST 134.209.236.1:8099/createTransactions  
+Ukázkový request:  
 
 _curl --location --request POST '134.209.236.1:8099/createTransactions' \
 --header 'Content-Type: application/json;charset=UTF-8' \
@@ -161,7 +161,7 @@ transactionType: code
 
 **Read data služby (vracejí seznam transakcí odpovídající danným relacím):**
 
-GET 134.209.236.1:8099/accounts/2002222222/transactions
+GET 134.209.236.1:8099/accounts/2002222222/transactions  
 business klíč: ownAccountNumber
 
 GET 134.209.236.1:8099/counterPartyAccounts/0000009505020008/transactions
