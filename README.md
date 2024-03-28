@@ -158,12 +158,16 @@ statement: number
 transactionType: code 
 
 Další read data služby (vracejí seznam transakcí odpovídající danným relacím):
+
 GET 134.209.236.1:8099/accounts/2002222222/transactions
 business klíč: ownAccountNumber
+
 GET 134.209.236.1:8099/counterPartyAccounts/0000009505020008/transactions
 business klíč: number
+
 GET 134.209.236.1:8099/statements/195/transactions
 business klíč: number
+
 GET 134.209.236.1:8099/trxTypes/0/transactions
 business klíč: code
 
