@@ -179,5 +179,8 @@ business klíč: code
 GET 134.209.236.1:8099/accounts/2002222222/sum  
 business klíč: ownAccountNumber  
 
+Pro elegantnější transformaci databázových záznamů do json api byla vyvinuta a použita tato knihovna:
+https://github.com/moravec-it/streamit
+
 
 
