@@ -2,6 +2,8 @@ package org.ppf.api.dto;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionDto {
 
@@ -196,6 +198,42 @@ public class TransactionDto {
 
         public void setCurrency(String currency) {
             this.currency = currency;
+        }
+    }
+
+    public static class Currency {
+        private String currency;
+        private List<Indicator> indicators;
+
+        public Currency(String currency) {
+            this.currency = currency;
+            this.indicators = new ArrayList<>();
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public List<Indicator> getIndicators() {
+            return indicators;
+        }
+    }
+
+    public static class Indicator {
+        private String indicator;
+        private BigDecimal value;
+
+        public Indicator(String indicator, BigDecimal value) {
+            this.indicator = indicator;
+            this.value = value;
+        }
+
+        public String getIndicator() {
+            return indicator;
+        }
+
+        public BigDecimal getValue() {
+            return value;
         }
     }
 

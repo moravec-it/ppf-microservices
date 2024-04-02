@@ -1,5 +1,6 @@
 package org.ppf.logic;
 
+import cz.soulit.streamit.excollector.ExCollectors;
 import org.ppf.api.dto.AccountDto;
 import org.ppf.api.dto.StatementDto;
 import org.ppf.api.dto.TransactionDto;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,14 +60,19 @@ public class TransactionService {
     }
 
     @Transactional
-    public List<TransactionDto.Amount> fetchAccountTransactionsSum(String ownAccountNumber) {
+    public List<TransactionDto.Currency> fetchAccountTransactionsSum(String ownAccountNumber) {
         List<TransactionAmount> amounts = transactionDao.sumAccountTransactions(ownAccountNumber);
-        return amounts.stream().map(amount -> {
-            TransactionDto.Amount amountDto = new TransactionDto.Amount();
-            amountDto.setCurrency(amount.getCurrency());
-            amountDto.setValue(amount.getAmount());
-            return amountDto;
-        }).collect(Collectors.toList());
+        return amounts.stream().collect(
+            ExCollectors.mapit(
+                () -> new ArrayList<>(),
+                (amount, currency) -> amount.getCurrency().equals(currency.getCurrency()),
+                amount -> new TransactionDto.Currency(amount.getCurrency()),
+                ExCollectors.mapit(
+                    currency -> currency.getIndicators(),
+                    amount -> new TransactionDto.Indicator(amount.getCreditDebitIndicator(), amount.getAmount())
+                )
+            )
+        );
     }
 
     protected TransactionDto mapTransactionToDto(Transaction transaction) {

@@ -50,7 +50,7 @@ public class TransactionController {
     }
 
     @GetMapping("/accounts/{ownAccountNumber}/sum")
-    public List<TransactionDto.Amount> getAccountTransactionsSum(@PathVariable String ownAccountNumber) {
+    public List<TransactionDto.Currency> getAccountTransactionsSum(@PathVariable String ownAccountNumber) {
         return transactionService.fetchAccountTransactionsSum(ownAccountNumber);
     }
 
